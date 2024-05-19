@@ -43,16 +43,21 @@
             padding: 0;
             width: 100%;
             max-width: 400px;
+            max-height: 200px; /* Set a fixed height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
         }
         li {
             background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border-bottom: 1px solid #ddd;
             padding: 10px;
-            margin-top: 5px;
             font-size: 18px;
             color: #333;
-
+        }
+        li:last-child {
+            border-bottom: none;
         }
 
     </style>
