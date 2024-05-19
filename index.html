@@ -38,10 +38,19 @@
             width: 100%;
             max-width: 400px;
         }
-        p {
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 5px;
             font-size: 18px;
             color: #333;
-            margin-top: 10px;
+
         }
     </style>
 </head>
@@ -51,17 +60,27 @@
 
     <div class="input-container">
         <input type="text" id="userInput" placeholder="Type something here...">
-        <p id="displayText"></p>
+        <ul id="textList"></ul>
     </div>
-    
 
-    
+   
+
+
     <script>
         const userInput = document.getElementById('userInput');
-        const displayText = document.getElementById('displayText');
+        const textList = document.getElementById('textList');
 
-        userInput.addEventListener('input', function() {
-            displayText.textContent = userInput.value;
+        userInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const text = userInput.value.trim();
+                if (text !== '') {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = text;
+                    textList.appendChild(listItem);
+                    userInput.value = '';
+                }
+            }
         });
     </script>
 </body>
