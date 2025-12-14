@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лижні перегони: Задача на наздоганяння</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .problem-statement {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .problem-statement h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .problem-statement p {
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="number"],
+        .control-group input[type="range"] {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .control-group input[type="number"]:focus,
+        .control-group input[type="range"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .slider-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .time-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .visualization-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .race-track {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 50%, #fef3c7 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 2px solid #cbd5e1;
+        }
+
+        .uphill-section {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 100%);
+            border-right: 3px dashed #3b82f6;
+            opacity: 0.7;
+        }
+
+        .track-marker {
+            position: absolute;
+            height: 100%;
+            width: 2px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .track-label {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.85rem;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .skier {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: left 0.05s linear;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .skier-ivanka {
+            top: 100px;
+            background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+        }
+
+        .skier-olesya {
+            top: 200px;
+            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+        }
+
+        .skier-label {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .skier-info {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 1.4;
+            min-width: 120px;
+        }
+
+        .distance-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            left: auto;
+            transform: none;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-container {
+            margin-top: 30px;
+        }
+
+        .graph-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        canvas {
+            width: 100% !important;
+            max-height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .solution-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .solution-panel h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .solution-steps {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.8;
+        }
+
+        .solution-steps p {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .time-display {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .catching-up {
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎿 Лижні перегони: Задача на наздоганяння</h1>
+
+        <div class="problem-statement">
+            <h2>Умова задачі</h2>
+            <p>Іванка та Олеся беруть участь у лижних перегонах. Одразу після старту лижницям доведося підніматися
+                вгору. Іванка, швидкість якої на підйомі становила 8 км/год, відстала від Олесі, що піднімалася зі
+                швидкістю 12 км/год. Через 1 км підйом закінчився, а Іванка зі швидкістю 20 км/год кинулася наздоганяти
+                за Олесю, яка рухалася зі швидкістю 15 км/год. <strong>Яку відстань потрібно буде пройти Іванці по
+                    горизонтальній лижній трасі, щоб наздогнати Олесю?</strong></p>
+        </div>
+
+        <div class="controls-panel">
+            <h2>Параметри задачі</h2>
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label>Швидкість Іванки на підйомі (км/год):</label>
+                    <input type="number" id="v1-uphill" value="8" min="1" max="20" step="0.5">
+                </div>
+                <div class="control-group">
+                    <label>Швидкість Олесі на підйомі (км/год):</label>
+                    <input type="number" id="v2-uphill" value="12" min="1" max="20" step="0.5">
+                </div>
+                <div class="control-group">
+                    <label>Довжина підйому (км):</label>
+                    <input type="number" id="uphill-distance" value="1" min="0.1" max="5" step="0.1">
+                </div>
+                <div class="control-group">
+                    <label>Швидкість Іванки на рівнині (км/год):</label>
+                    <input type="number" id="v1-flat" value="20" min="1" max="40" step="0.5">
+                </div>
+                <div class="control-group">
+                    <label>Швидкість Олесі на рівнині (км/год):</label>
+                    <input type="number" id="v2-flat" value="15" min="1" max="40" step="0.5">
+                </div>
+                <div class="control-group">
+                    <label>Швидкість анімації:</label>
+                    <input type="range" id="animation-speed" min="1" max="100" value="40" step="1">
+                    <span class="slider-value" id="speed-value">40x</span>
+                </div>
+            </div>
+            <div class="time-controls">
+                <button id="reset-btn">🔄 Скинути</button>
+                <button id="play-btn">▶️ Старт</button>
+                <button id="pause-btn" disabled>⏸️ Пауза</button>
+            </div>
+        </div>
+
+        <div class="visualization-area">
+            <div class="time-display" id="time-display">Час: 0.00 хв</div>
+
+            <div class="race-track" id="race-track">
+                <div class="uphill-section" id="uphill-section"></div>
+                <div class="skier skier-ivanka" id="skier-ivanka">
+                    <span class="skier-label">Іванка</span>
+                    <div class="skier-info" id="ivanka-info"></div>
+                    🎿
+                </div>
+                <div class="skier skier-olesya" id="skier-olesya">
+                    <span class="skier-label">Олеся</span>
+                    <div class="skier-info" id="olesya-info"></div>
+                    🎿
+                </div>
+                <div class="distance-indicator" id="distance-indicator"></div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);">
+                    </div>
+                    <span style="color: #1e293b; font-weight: 600;">Іванка</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);">
+                    </div>
+                    <span style="color: #1e293b; font-weight: 600;">Олеся</span>
+                </div>
+            </div>
+
+            <div class="graph-container">
+                <h3 class="graph-title">Графік положення в часі</h3>
+                <canvas id="position-graph"></canvas>
+            </div>
+        </div>
+
+        <div class="solution-panel">
+            <h2>Розв'язок</h2>
+            <div class="solution-steps" id="solution-steps">
+                <!-- Solution will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Problem parameters
+        let params = {
+            v1Uphill: 8,    // Ivanka uphill speed (km/h)
+            v2Uphill: 12,   // Olesya uphill speed (km/h)
+            uphillDistance: 1, // Uphill distance (km)
+            v1Flat: 20,     // Ivanka flat speed (km/h)
+            v2Flat: 15,     // Olesya flat speed (km/h)
+            animationSpeed: 40
+        };
+
+        // Animation state
+        let isPlaying = false;
+        let currentTime = 0; // in hours
+        let animationFrameId = null;
+        let lastTimestamp = null;
+
+        // Canvas and context
+        const canvas = document.getElementById('position-graph');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = 400 * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Calculate solution
+        function calculateSolution() {
+            const { v1Uphill, v2Uphill, uphillDistance, v1Flat, v2Flat } = params;
+
+            // Time for each skier to complete uphill section
+            const t1Uphill = uphillDistance / v1Uphill; // hours
+            const t2Uphill = uphillDistance / v2Uphill; // hours
+
+            // Time difference
+            const timeDifference = t1Uphill - t2Uphill; // hours
+
+            // Distance Olesya travels ahead during this time on flat section
+            const headStart = v2Flat * timeDifference; // km
+
+            // Relative speed (Ivanka catching up)
+            const relativeSpeed = v1Flat - v2Flat; // km/h
+
+            // Time to catch up
+            const catchUpTime = headStart / relativeSpeed; // hours
+
+            // Distance Ivanka travels on flat to catch up
+            const catchUpDistance = v1Flat * catchUpTime; // km
+
+            return {
+                t1Uphill,
+                t2Uphill,
+                timeDifference,
+                headStart,
+                relativeSpeed,
+                catchUpTime,
+                catchUpDistance,
+                totalTimeIvanka: t1Uphill + catchUpTime,
+                totalTimeOlesya: t1Uphill + catchUpTime // They meet at the same time!
+            };
+        }
+
+        // Get position of skier at given time
+        function getPosition(skier, time) {
+            const { v1Uphill, v2Uphill, uphillDistance, v1Flat, v2Flat } = params;
+            const solution = calculateSolution();
+
+            if (skier === 'ivanka') {
+                const t1Uphill = uphillDistance / v1Uphill;
+                // Stop at catch-up point
+                if (time >= solution.totalTimeIvanka) {
+                    return uphillDistance + solution.catchUpDistance;
+                }
+                if (time <= t1Uphill) {
+                    return v1Uphill * time; // On uphill
+                } else {
+                    return uphillDistance + v1Flat * (time - t1Uphill); // On flat
+                }
+            } else { // olesya
+                const t2Uphill = uphillDistance / v2Uphill;
+                // Stop at catch-up point (same position as Ivanka)
+                if (time >= solution.totalTimeOlesya) {
+                    return uphillDistance + solution.catchUpDistance;
+                }
+                if (time <= t2Uphill) {
+                    return v2Uphill * time; // On uphill
+                } else {
+                    return uphillDistance + v2Flat * (time - t2Uphill); // On flat
+                }
+            }
+        }
+
+        // Update visualization
+        function updateVisualization() {
+            const solution = calculateSolution();
+            const trackWidth = document.getElementById('race-track').offsetWidth;
+            const maxDistance = Math.max(
+                getPosition('ivanka', solution.totalTimeIvanka),
+                getPosition('olesya', solution.totalTimeOlesya)
+            ) * 1.1;
+
+            // Update uphill section width
+            const uphillWidth = (params.uphillDistance / maxDistance) * trackWidth;
+            document.getElementById('uphill-section').style.width = uphillWidth + 'px';
+
+            // Update skier positions
+            const ivankaPos = getPosition('ivanka', currentTime);
+            const olesyaPos = getPosition('olesya', currentTime);
+
+            const ivankaLeft = (ivankaPos / maxDistance) * trackWidth;
+            const olesyaLeft = (olesyaPos / maxDistance) * trackWidth;
+
+            const ivankaEl = document.getElementById('skier-ivanka');
+            const olesyaEl = document.getElementById('skier-olesya');
+
+            ivankaEl.style.left = Math.min(ivankaLeft, trackWidth - 40) + 'px';
+            olesyaEl.style.left = Math.min(olesyaLeft, trackWidth - 40) + 'px';
+
+            // Add catching up animation
+            if (Math.abs(ivankaPos - olesyaPos) < 0.05 && ivankaPos > params.uphillDistance) {
+                ivankaEl.classList.add('catching-up');
+                olesyaEl.classList.add('catching-up');
+            } else {
+                ivankaEl.classList.remove('catching-up');
+                olesyaEl.classList.remove('catching-up');
+            }
+
+            // Calculate current speeds
+            const t1Uphill = params.uphillDistance / params.v1Uphill;
+            const t2Uphill = params.uphillDistance / params.v2Uphill;
+
+            let ivankaSpeed, olesyaSpeed;
+            if (currentTime >= solution.totalTimeIvanka) {
+                ivankaSpeed = 0;
+            } else {
+                ivankaSpeed = currentTime <= t1Uphill ? params.v1Uphill : params.v1Flat;
+            }
+
+            if (currentTime >= solution.totalTimeOlesya) {
+                olesyaSpeed = 0;
+            } else {
+                olesyaSpeed = currentTime <= t2Uphill ? params.v2Uphill : params.v2Flat;
+            }
+
+            // Update info captions
+            const ivankaInfo = document.getElementById('ivanka-info');
+            const olesyaInfo = document.getElementById('olesya-info');
+
+            if (currentTime > 0 && currentTime < solution.totalTimeIvanka * 1.2) {
+                ivankaInfo.innerHTML = `v: ${ivankaSpeed} км/год<br>s: ${ivankaPos.toFixed(2)} км`;
+                olesyaInfo.innerHTML = `v: ${olesyaSpeed} км/год<br>s: ${olesyaPos.toFixed(2)} км`;
+            } else {
+                ivankaInfo.innerHTML = '';
+                olesyaInfo.innerHTML = '';
+            }
+
+            // Update distance indicator
+            const distanceIndicator = document.getElementById('distance-indicator');
+            const distance = Math.abs(ivankaPos - olesyaPos);
+
+            if (currentTime > 0 && distance > 0.01 && currentTime < solution.totalTimeIvanka) {
+                distanceIndicator.style.display = 'block';
+                distanceIndicator.textContent = `Δs: ${distance.toFixed(3)} км`;
+            } else {
+                distanceIndicator.style.display = 'none';
+            }
+
+            // Update time display
+            const timeInMinutes = currentTime * 60;
+            document.getElementById('time-display').textContent = `Час: ${timeInMinutes.toFixed(2)} хв`;
+        }
+
+        // Draw graph
+        function drawGraph() {
+            const solution = calculateSolution();
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = 400;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const rawMaxTime = Math.max(solution.totalTimeIvanka, solution.totalTimeOlesya) * 1.1;
+            const rawMaxDistance = Math.max(
+                getPosition('ivanka', solution.totalTimeIvanka),
+                getPosition('olesya', solution.totalTimeOlesya)
+            ) * 1.1;
+
+            // Round up to nearest multiple of 5 for nice integer ticks
+            // Time is in hours, convert to minutes for rounding, then back
+            const maxTimeMin = Math.ceil((rawMaxTime * 60) / 5) * 5;
+            const maxTime = maxTimeMin / 60;
+
+            const maxDistance = Math.ceil(rawMaxDistance / 5) * 5;
+
+            const padding = 60;
+            const graphWidth = width - 2 * padding;
+            const graphHeight = height - 2 * padding;
+
+            // Draw axes
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+
+            // Draw grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const y = padding + (graphHeight * i / 10);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+
+                const x = padding + (graphWidth * i / 10);
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+            }
+
+            // Draw labels
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 10; i++) {
+                const distVal = (maxDistance * i / 10);
+                // Format: 0.5, 1, 1.5, 2...
+                const dist = distVal.toFixed(1).replace('.0', '');
+                const y = height - padding - (graphHeight * i / 10);
+
+                if (i % 2 === 0) {
+                    // Main label (whole numbers)
+                    ctx.fillStyle = '#1e293b';
+                    ctx.font = '12px Inter';
+                    ctx.fillText(dist + ' км', padding - 10, y + 4);
+                } else {
+                    // Intermediate label (0.5s) - smaller
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '10px Inter';
+                    ctx.fillText(dist, padding - 10, y + 3);
+                }
+            }
+
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= 10; i++) {
+                const timeVal = (maxTime * 60 * i / 10);
+                const time = timeVal.toFixed(1).replace('.0', '');
+                const x = padding + (graphWidth * i / 10);
+
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '11px Inter';
+                ctx.fillText(time + ' хв', x, height - padding + 20);
+            }
+
+            // Axis labels
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('Час', width / 2, height - 10);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Відстань', 0, 0);
+            ctx.restore();
+
+            // Mark significant points on axes
+            // 1. End of uphill section (distance marker)
+            const uphillY = height - padding - (params.uphillDistance / maxDistance) * graphHeight;
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 4]);
+            ctx.beginPath();
+            ctx.moveTo(padding, uphillY);
+            ctx.lineTo(width - padding, uphillY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label for uphill end
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = 'bold 11px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('Кінець підйому', padding + 10, uphillY - 5);
+
+            // 2. Time axis markers
+            const t1Uphill = params.uphillDistance / params.v1Uphill;
+            const t2Uphill = params.uphillDistance / params.v2Uphill;
+            const meetingTime = solution.totalTimeIvanka;
+
+            // Helper to draw time marker
+            function drawTimeMarker(time, color, label, yOffset = 0) {
+                const x = padding + (time / maxTime) * graphWidth;
+
+                // Vertical dashed line
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Triangle marker on axis
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x, height - padding);
+                ctx.lineTo(x - 5, height - padding + 6);
+                ctx.lineTo(x + 5, height - padding + 6);
+                ctx.fill();
+
+                // Time label
+                ctx.font = 'bold 12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText((time * 60).toFixed(1) + ' хв', x, height - padding + 18 + yOffset);
+            }
+
+            // Draw markers (Ivanka: Orange, Olesya: Purple, Meeting: Green)
+            // All aligned at the same level (yOffset = 12)
+            drawTimeMarker(t1Uphill, '#f97316', '', 12);
+            drawTimeMarker(t2Uphill, '#8b5cf6', '', 12);
+            drawTimeMarker(meetingTime, '#22c55e', '', 12);
+
+            // 3. Meeting point horizontal line
+            const meetingDistance = params.uphillDistance + solution.catchUpDistance;
+            const meetingY = height - padding - (meetingDistance / maxDistance) * graphHeight;
+            const meetingX = padding + (meetingTime / maxTime) * graphWidth;
+
+            // Horizontal line at meeting distance
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 4]);
+            ctx.beginPath();
+            ctx.moveTo(padding, meetingY);
+            ctx.lineTo(width - padding, meetingY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Labels for meeting point
+            ctx.fillStyle = '#22c55e';
+            ctx.font = 'bold 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('Зустріч', meetingX, padding - 5);
+            ctx.textAlign = 'right';
+            ctx.fillText('Точка зустрічі', padding - 10, meetingY - 5);
+
+
+            // Draw Ivanka's path
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            const ivankaEndTime = Math.min(currentTime, solution.totalTimeIvanka);
+            let firstPoint = true;
+            for (let t = 0; t <= ivankaEndTime; t += maxTime / 1000) {
+                const pos = getPosition('ivanka', t);
+                const x = padding + (t / maxTime) * graphWidth;
+                const y = height - padding - (pos / maxDistance) * graphHeight;
+                if (firstPoint) {
+                    ctx.moveTo(x, y);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            // Draw final point if we haven't reached it exactly
+            if (ivankaEndTime > 0) {
+                const finalPos = getPosition('ivanka', ivankaEndTime);
+                const finalX = padding + (ivankaEndTime / maxTime) * graphWidth;
+                const finalY = height - padding - (finalPos / maxDistance) * graphHeight;
+                ctx.lineTo(finalX, finalY);
+            }
+            ctx.stroke();
+
+            // Draw Olesya's path
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            const olesyaEndTime = Math.min(currentTime, solution.totalTimeOlesya);
+            firstPoint = true;
+            for (let t = 0; t <= olesyaEndTime; t += maxTime / 1000) {
+                const pos = getPosition('olesya', t);
+                const x = padding + (t / maxTime) * graphWidth;
+                const y = height - padding - (pos / maxDistance) * graphHeight;
+                if (firstPoint) {
+                    ctx.moveTo(x, y);
+                    firstPoint = false;
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            // Draw final point if we haven't reached it exactly
+            if (olesyaEndTime > 0) {
+                const finalPos = getPosition('olesya', olesyaEndTime);
+                const finalX = padding + (olesyaEndTime / maxTime) * graphWidth;
+                const finalY = height - padding - (finalPos / maxDistance) * graphHeight;
+                ctx.lineTo(finalX, finalY);
+            }
+            ctx.stroke();
+
+            // Draw current time marker
+            if (currentTime > 0 && currentTime < maxTime) {
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                const x = padding + (currentTime / maxTime) * graphWidth;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw catch-up point
+            if (currentTime >= solution.totalTimeIvanka) {
+                const x = padding + (solution.totalTimeIvanka / maxTime) * graphWidth;
+                const pos = getPosition('ivanka', solution.totalTimeIvanka);
+                const y = height - padding - (pos / maxDistance) * graphHeight;
+
+                ctx.fillStyle = '#22c55e';
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = '#1e293b';
+                ctx.font = 'bold 12px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillText('Зустріч!', x + 10, y - 10);
+            }
+        }
+
+        // Update solution text
+        function updateSolution() {
+            const solution = calculateSolution();
+            const solutionHTML = `
+                <p><strong>Крок 1:</strong> Обчислюємо час проходження підйому для кожної лижниці:</p>
+                <p>• Іванка: t₁ = ${params.uphillDistance} км / ${params.v1Uphill} км/год = <span class="highlight">${(solution.t1Uphill * 60).toFixed(2)} хв</span></p>
+                <p>• Олеся: t₂ = ${params.uphillDistance} км / ${params.v2Uphill} км/год = <span class="highlight">${(solution.t2Uphill * 60).toFixed(2)} хв</span></p>
+                
+                <p><strong>Крок 2:</strong> Знаходимо різницю в часі:</p>
+                <p>Δt = ${(solution.t1Uphill * 60).toFixed(2)} - ${(solution.t2Uphill * 60).toFixed(2)} = <span class="highlight">${(solution.timeDifference * 60).toFixed(2)} хв</span></p>
+                
+                <p><strong>Крок 3:</strong> За цей час Олеся встигне пройти на рівнині:</p>
+                <p>S = ${params.v2Flat} км/год × ${solution.timeDifference.toFixed(4)} год = <span class="highlight">${solution.headStart.toFixed(3)} км</span></p>
+                
+                <p><strong>Крок 4:</strong> Відносна швидкість наздоганяння:</p>
+                <p>v<sub>відн</sub> = ${params.v1Flat} - ${params.v2Flat} = <span class="highlight">${solution.relativeSpeed} км/год</span></p>
+                
+                <p><strong>Крок 5:</strong> Час, необхідний для наздоганяння:</p>
+                <p>t = ${solution.headStart.toFixed(3)} км / ${solution.relativeSpeed} км/год = <span class="highlight">${(solution.catchUpTime * 60).toFixed(2)} хв</span></p>
+                
+                <p><strong>Відповідь:</strong> Іванці потрібно пройти по горизонтальній трасі <span class="highlight" style="font-size: 1.2em;">${solution.catchUpDistance.toFixed(2)} км</span>, щоб наздогнати Олесю.</p>
+            `;
+            document.getElementById('solution-steps').innerHTML = solutionHTML;
+        }
+
+        // Animation loop
+        function animate(timestamp) {
+            if (!isPlaying) return;
+
+            if (lastTimestamp === null) {
+                lastTimestamp = timestamp;
+            }
+
+            const deltaTime = (timestamp - lastTimestamp) / 1000; // seconds
+            lastTimestamp = timestamp;
+
+            const solution = calculateSolution();
+            currentTime += (deltaTime / 3600) * params.animationSpeed; // Convert to hours
+
+            // Stop animation at meeting point
+            if (currentTime >= solution.totalTimeIvanka) {
+                currentTime = solution.totalTimeIvanka; // Clamp to exact meeting time
+                isPlaying = false;
+                document.getElementById('play-btn').disabled = false;
+                document.getElementById('pause-btn').disabled = true;
+                updateVisualization();
+                drawGraph();
+                return;
+            }
+
+            updateVisualization();
+            drawGraph();
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Event listeners
+        document.getElementById('play-btn').addEventListener('click', () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                lastTimestamp = null;
+                document.getElementById('play-btn').disabled = true;
+                document.getElementById('pause-btn').disabled = false;
+                animationFrameId = requestAnimationFrame(animate);
+            }
+        });
+
+        document.getElementById('pause-btn').addEventListener('click', () => {
+            isPlaying = false;
+            lastTimestamp = null;
+            document.getElementById('play-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            isPlaying = false;
+            currentTime = 0;
+            lastTimestamp = null;
+            document.getElementById('play-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            updateVisualization();
+            drawGraph();
+        });
+
+        // Parameter change listeners
+        document.getElementById('v1-uphill').addEventListener('input', (e) => {
+            params.v1Uphill = parseFloat(e.target.value);
+            currentTime = 0;
+            updateSolution();
+            updateVisualization();
+            drawGraph();
+        });
+
+        document.getElementById('v2-uphill').addEventListener('input', (e) => {
+            params.v2Uphill = parseFloat(e.target.value);
+            currentTime = 0;
+            updateSolution();
+            updateVisualization();
+            drawGraph();
+        });
+
+        document.getElementById('uphill-distance').addEventListener('input', (e) => {
+            params.uphillDistance = parseFloat(e.target.value);
+            currentTime = 0;
+            updateSolution();
+            updateVisualization();
+            drawGraph();
+        });
+
+        document.getElementById('v1-flat').addEventListener('input', (e) => {
+            params.v1Flat = parseFloat(e.target.value);
+            currentTime = 0;
+            updateSolution();
+            updateVisualization();
+            drawGraph();
+        });
+
+        document.getElementById('v2-flat').addEventListener('input', (e) => {
+            params.v2Flat = parseFloat(e.target.value);
+            currentTime = 0;
+            updateSolution();
+            updateVisualization();
+            drawGraph();
+        });
+
+        document.getElementById('animation-speed').addEventListener('input', (e) => {
+            params.animationSpeed = parseFloat(e.target.value);
+            document.getElementById('speed-value').textContent = e.target.value + 'x';
+        });
+
+        // Initialize
+        updateSolution();
+        updateVisualization();
+        drawGraph();
+    </script>
+</body>
+
+</html>
